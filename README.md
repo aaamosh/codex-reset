@@ -108,3 +108,4 @@ Both endpoints were extracted from the official `openai.chatgpt` VS Code extensi
 - The OpenAI Codex team for the feature itself.
 - The [openai/codex](https://github.com/openai/codex) repo for documenting `/wham/usage` and the rest of the auth flow.
 - [Soju06/codex-lb](https://github.com/Soju06/codex-lb) and [steipete/CodexBar](https://github.com/steipete/CodexBar) for prior `/wham/*` reverse-engineering notes.
+- [Anthropic](https://www.anthropic.com)'s **Claude** (Opus 4.7) wrote this in one session — reverse-engineered the endpoint out of the VS Code extension's webview bundle, built the CLI, and drafted this README — on a day the author's own Codex account was locked out behind a redeem button that only lived in a UI he couldn't reach. A friendly nod across vendors.
