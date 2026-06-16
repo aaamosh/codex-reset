@@ -53,19 +53,21 @@ codex-reset consume --yes    # redeem without confirmation
 codex-reset consume --dry-run
 codex-reset --auth PATH      # use a different auth.json (e.g. CLIProxyAPI auths)
 codex-reset status --json    # machine-readable output
+codex-reset invite-status    # read-only referral diagnostics
 ```
 
-The script reads `access_token` and `account_id` from `auth.json`. By default it looks at `$CODEX_HOME/auth.json`, falling back to `~/.codex/auth.json`. You can point `--auth` at any other file with the same shape — useful for proxy setups like [CLIProxyAPI](https://github.com/luispater/CLIProxyAPI) where many accounts live in one place.
+The script reads `access_token` and `account_id` from `auth.json`. By default it looks at `$CODEX_HOME/auth.json`, falling back to `~/.codex/auth.json`. You can point `--auth` at any other file with the same shape — useful for proxy setups like [CLIProxyAPI](https://github.com/luispater/CLIProxyAPI) where many accounts live in one place. For proxy diagnostics, use the same auth file as the proxy/operator path you care about; your local default `~/.codex/auth.json` may be expired or a different account.
 
 ## How it works
 
-Three reset endpoints under `https://chatgpt.com/backend-api`:
+Reset and referral diagnostics use endpoints under `https://chatgpt.com/backend-api`:
 
 | Endpoint                                            | Method | Purpose                                           |
 | --------------------------------------------------- | ------ | ------------------------------------------------- |
 | `/wham/rate-limit-reset-credits`                    | GET    | List your banked credits and current statuses     |
 | `/wham/rate-limit-reset-credits/consume`            | POST   | Redeem one credit (body: `credit_id`, `redeem_request_id`) |
 | `/wham/usage`                                       | GET    | Current rate-limit windows (used for before/after)|
+| `/referrals/invite/eligibility`                     | GET    | Optional read-only invite eligibility probe       |
 
 Every request carries two headers:
 
@@ -74,7 +76,7 @@ Authorization: Bearer <access_token>
 ChatGPT-Account-Id: <account_id>
 ```
 
-Both endpoints were extracted from the official `openai.chatgpt` VS Code extension's webview bundle (`webview/assets/codex-api-*.js`). The script doesn't ship any auth — you bring your own via the file `codex login` already created.
+These endpoints were extracted from the official `openai.chatgpt` VS Code extension's webview bundle (`webview/assets/codex-api-*.js`). The script doesn't ship any auth — you bring your own via the file `codex login` already created.
 
 ## Referral invites
 
@@ -82,7 +84,8 @@ Codex reset credits and Codex referral invites are connected, but they are not
 the same API surface.
 
 The useful read-only backend signal available with normal Codex bearer auth is
-already in `GET /wham/usage`:
+already in `GET /wham/usage`, and `codex-reset invite-status` exposes just
+those safe fields by default:
 
 - `rate_limit_reset_credits.available_count`: how many banked reset credits are
   currently available to spend.
@@ -91,7 +94,8 @@ already in `GET /wham/usage`:
   `null`.
 
 The current `openai.chatgpt` VS Code extension also contains an invite
-eligibility query:
+eligibility query, which `codex-reset invite-status` can run only when you
+explicitly provide browser cookies:
 
 ```text
 GET /backend-api/referrals/invite/eligibility?referral_key=codex_referral_persistent_invite
@@ -102,7 +106,20 @@ In live testing this endpoint returned `403` when called with only the
 for `/wham/usage`. It returned `200` when the same bearer-auth request also
 included an authenticated ChatGPT browser `Cookie` header from the same account.
 So eligibility appears to require the browser/web session cookie path in
-addition to the Codex token.
+addition to the Codex token. Depending on route and anti-abuse checks, the
+eligibility probe can still return a non-JSON Cloudflare challenge; the CLI
+summarizes that response instead of dumping the whole HTML page.
+
+```bash
+codex-reset invite-status --json
+codex-reset invite-status --cookie-file ./cookie-header.txt
+printf '%s' "$CHATGPT_COOKIE" | codex-reset invite-status --cookie-file -
+```
+
+`--cookie-header` also exists for quick local testing, but it is usually safer
+to pass cookies through `--cookie-file -` so they do not linger in shell
+history. If the browser session is tied to a specific user agent, pass the same
+string with `--cookie-user-agent`.
 
 A successful eligibility response can look like:
 
@@ -134,7 +151,8 @@ with a JSON body like:
 
 Do not use the invite endpoint as a "status check": it can send real email
 invites. For safe diagnostics, prefer `/wham/usage` first and treat the
-eligibility endpoint as an optional web-session probe.
+eligibility endpoint as an optional web-session probe. If
+`remaining_referrals` is `null`, treat it as unknown, not zero.
 
 ### Successful response example
 
