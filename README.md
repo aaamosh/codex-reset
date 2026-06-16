@@ -59,7 +59,7 @@ The script reads `access_token` and `account_id` from `auth.json`. By default it
 
 ## How it works
 
-Three endpoints under `https://chatgpt.com/backend-api`:
+Three reset endpoints under `https://chatgpt.com/backend-api`:
 
 | Endpoint                                            | Method | Purpose                                           |
 | --------------------------------------------------- | ------ | ------------------------------------------------- |
@@ -75,6 +75,66 @@ ChatGPT-Account-Id: <account_id>
 ```
 
 Both endpoints were extracted from the official `openai.chatgpt` VS Code extension's webview bundle (`webview/assets/codex-api-*.js`). The script doesn't ship any auth — you bring your own via the file `codex login` already created.
+
+## Referral invites
+
+Codex reset credits and Codex referral invites are connected, but they are not
+the same API surface.
+
+The useful read-only backend signal available with normal Codex bearer auth is
+already in `GET /wham/usage`:
+
+- `rate_limit_reset_credits.available_count`: how many banked reset credits are
+  currently available to spend.
+- `referral_beacon`: referral-related state when OpenAI exposes it for the
+  account. On accounts without a visible active referral campaign this can be
+  `null`.
+
+The current `openai.chatgpt` VS Code extension also contains an invite
+eligibility query:
+
+```text
+GET /backend-api/referrals/invite/eligibility?referral_key=codex_referral_persistent_invite
+```
+
+In live testing this endpoint returned `403` when called with only the
+`Authorization: Bearer <access_token>` + `ChatGPT-Account-Id` headers that work
+for `/wham/usage`. It returned `200` when the same bearer-auth request also
+included an authenticated ChatGPT browser `Cookie` header from the same account.
+So eligibility appears to require the browser/web session cookie path in
+addition to the Codex token.
+
+A successful eligibility response can look like:
+
+```json
+{
+  "grant_action": "rate_limit_reset_credit",
+  "grant_amount": 1,
+  "ineligible_reason": null,
+  "ineligible_reason_code": null,
+  "remaining_referrals": null,
+  "should_show": true
+}
+```
+
+The mutating invite endpoint is:
+
+```text
+POST /backend-api/wham/referrals/invite
+```
+
+with a JSON body like:
+
+```json
+{
+  "referral_key": "codex_referral_persistent_invite",
+  "emails": ["friend@example.com"]
+}
+```
+
+Do not use the invite endpoint as a "status check": it can send real email
+invites. For safe diagnostics, prefer `/wham/usage` first and treat the
+eligibility endpoint as an optional web-session probe.
 
 ### Successful response example
 
