@@ -181,12 +181,6 @@ eligibility endpoint as an optional web-session probe. If
 
 [MIT](LICENSE) — do whatever you want, no warranty.
 
-## Contributors
-
-- [@aaamosh](https://github.com/aaamosh) — project owner and operator.
-- [Anthropic](https://www.anthropic.com)'s **Claude** (Opus 4.7) — initial reverse-engineering, CLI implementation, and README draft.
-- [OpenAI](https://openai.com)'s **Codex** — referral invite diagnostics, cookie-assisted eligibility guardrails, tests, and follow-up documentation.
-
 ## Acknowledgements
 
 - The OpenAI Codex team for the feature itself.
