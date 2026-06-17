@@ -2,6 +2,8 @@
 
 > Spend your Codex **banked rate-limit reset** from the command line.
 
+> 🤝 **Need more banked resets?** OpenAI's referral promo is open through **2026-06-24** — Plus/Pro users earn an extra banked reset for every new Codex user they invite (up to 3). If you have invite slots to give or want to receive one, the companion [aaamosh/codex-hud](https://github.com/aaamosh/codex-hud) project runs a tiny Telegram bot ([`@codexHuddbot`](https://t.me/codexHuddbot)) that pairs real givers with real seekers through the official OpenAI flow. No farming, no automation, no money — just coordination.
+
 OpenAI [rolled out savable rate-limit resets for Codex](https://community.openai.com/t/flexible-rate-limit-resets-for-codex/1383470) on **2026-06-12**. Every eligible ChatGPT plan (Go / Plus / Pro / Business) was granted one free reset, plus more via the referral program. The "spend it now" button lives only in the desktop app and the VS Code / Cursor / Windsurf extension.
 
 The Rust CLI (`codex`) [doesn't expose it yet](https://github.com/openai/codex/pull/5302) (only `account/rateLimits/read` was added), and the extension's reset prompt [doesn't reliably appear on Linux either](https://community.openai.com/t/flexible-rate-limit-resets-for-codex/1383470/4). If you're on a server, in WSL, or just live in a terminal, you couldn't redeem the credit you were given.
