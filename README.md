@@ -46,6 +46,22 @@ curl -fsSL https://raw.githubusercontent.com/aaamosh/codex-reset/main/codex_rese
 
 …or just clone the repo and run `python3 codex_reset.py`. There are no third-party dependencies — Python 3.9+ stdlib is enough.
 
+## Browser companion
+
+`codex-reset.html` is a standalone browser companion for the same project. It is
+not a backend, not a referral queue, and not an automation surface. It helps a
+human operator build visible `codex-reset` commands, copy the install command,
+normalize a recipient email for the official OpenAI invite UI, and copy a short
+manual checklist.
+
+- Download: `https://github.com/aaamosh/codex-reset/raw/main/codex-reset.html`
+- Source: `https://github.com/aaamosh/codex-reset/blob/main/codex-reset.html`
+
+The page is a single inspectable HTML file with a strict `connect-src 'none'`
+Content Security Policy. It does not call OpenAI endpoints, read `auth.json`,
+read cookies, use browser storage, or redeem reset credits. The CLI remains the
+only surface in this repo that reads auth and performs reset mutations.
+
 ## Usage
 
 ```
@@ -178,6 +194,18 @@ eligibility endpoint as an optional web-session probe. If
 - **This does not bypass anything.** It only spends a credit OpenAI explicitly granted to your account. If you have `available_count: 0`, there's nothing to redeem.
 - **API-key Codex users don't have this.** Savable resets are tied to ChatGPT subscriptions; pure API-key usage is billed per token with no 5-hour windows.
 - **The credit is consumed even on a partial run.** If the POST returns 200, the credit is gone — same behavior as clicking the button in the app.
+
+## Source of truth
+
+- `README.md`: purpose, boundaries, endpoints, browser companion, usage, and documentation contract.
+- `codex_reset.py`: CLI implementation.
+- `codex-reset.html`: standalone browser companion.
+- `test_codex_reset.py` and `test_codex_reset_page.py`: CLI and browser companion guardrails.
+- `BEST_PRACTICES.md`: repeatable lessons for future Codex helper features.
+
+Meaningful changes to behavior, public copy, endpoint assumptions, privacy
+boundaries, distribution URLs, or verification requirements must update this
+README in the same commit.
 
 ## License
 

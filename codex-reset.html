@@ -1,0 +1,667 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta
+    http-equiv="Content-Security-Policy"
+    content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; img-src 'self' data:; connect-src 'none'; form-action 'none'; base-uri 'none'; frame-ancestors 'none'"
+  >
+  <meta name="color-scheme" content="dark light">
+  <title>Codex Reset</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --canvas: #090b0f;
+      --surface: #11161c;
+      --panel: #151b23;
+      --raised: #1b232d;
+      --line: rgba(189, 204, 218, 0.2);
+      --line-strong: rgba(125, 215, 189, 0.58);
+      --text: #f4f7f5;
+      --muted: #a4b0bb;
+      --soft: #d6dee5;
+      --accent: #7dd7bd;
+      --accent-2: #8eb6ff;
+      --danger: #f08c86;
+      --warn: #f0c36a;
+      --focus: #9debd8;
+      --radius: 8px;
+      font-family:
+        Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+        "Segoe UI", sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background:
+        linear-gradient(180deg, rgba(125, 215, 189, 0.06), transparent 260px),
+        var(--canvas);
+      color: var(--text);
+      line-height: 1.5;
+    }
+
+    main {
+      width: min(1120px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 36px 0 56px;
+    }
+
+    header {
+      display: grid;
+      gap: 18px;
+      border-bottom: 1px solid var(--line);
+      padding-bottom: 26px;
+      margin-bottom: 24px;
+    }
+
+    .eyebrow {
+      color: var(--accent);
+      font-size: 0.78rem;
+      font-weight: 760;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    h1,
+    h2,
+    h3,
+    p {
+      margin: 0;
+      letter-spacing: 0;
+    }
+
+    h1 {
+      max-width: 15ch;
+      font-size: clamp(3rem, 8vw, 6.8rem);
+      line-height: 0.9;
+    }
+
+    h2 {
+      color: var(--accent);
+      font-size: 0.98rem;
+      text-transform: uppercase;
+      margin-bottom: 14px;
+    }
+
+    h3 {
+      color: var(--soft);
+      font-size: 0.98rem;
+      margin-bottom: 8px;
+    }
+
+    .lead {
+      max-width: 760px;
+      color: var(--muted);
+      font-size: 1.08rem;
+    }
+
+    .notice {
+      max-width: 920px;
+      padding: 13px 14px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: rgba(17, 22, 28, 0.82);
+      color: var(--soft);
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(320px, 0.78fr);
+      gap: 18px;
+      align-items: start;
+    }
+
+    .stack {
+      display: grid;
+      gap: 18px;
+    }
+
+    section {
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--surface);
+      padding: 18px;
+    }
+
+    .section-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    label {
+      display: grid;
+      gap: 8px;
+      color: var(--muted);
+      font-size: 0.88rem;
+      min-width: 0;
+    }
+
+    input,
+    select,
+    textarea,
+    button {
+      font: inherit;
+    }
+
+    input,
+    select,
+    textarea {
+      width: 100%;
+      min-height: 46px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: #090b0e;
+      color: var(--text);
+      padding: 0 12px;
+    }
+
+    textarea {
+      min-height: 104px;
+      padding: 12px;
+      resize: vertical;
+      line-height: 1.45;
+    }
+
+    input[type="checkbox"] {
+      width: auto;
+      min-height: auto;
+      margin: 0;
+    }
+
+    .check-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      min-height: 34px;
+    }
+
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 14px;
+    }
+
+    button {
+      min-height: 44px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--raised);
+      color: var(--text);
+      padding: 0 14px;
+      cursor: pointer;
+      font-weight: 700;
+    }
+
+    button.primary {
+      border-color: var(--line-strong);
+      background: var(--accent);
+      color: #03110c;
+    }
+
+    button.secondary {
+      color: var(--soft);
+    }
+
+    button:disabled,
+    button.primary:disabled {
+      border-color: var(--line);
+      background: #11171d;
+      color: var(--muted);
+      cursor: not-allowed;
+    }
+
+    a {
+      color: var(--accent);
+      overflow-wrap: anywhere;
+      text-underline-offset: 3px;
+    }
+
+    a:focus-visible,
+    button:focus-visible,
+    input:focus-visible,
+    select:focus-visible,
+    textarea:focus-visible {
+      outline: 2px solid var(--focus);
+      outline-offset: 3px;
+    }
+
+    .result {
+      display: grid;
+      gap: 8px;
+      margin-top: 16px;
+      padding: 12px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: #080a0d;
+    }
+
+    .result strong {
+      color: var(--muted);
+      font-size: 0.78rem;
+      text-transform: uppercase;
+    }
+
+    .mono {
+      font-family:
+        "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+      overflow-wrap: anywhere;
+    }
+
+    .status {
+      min-height: 22px;
+      margin-top: 10px;
+      color: var(--muted);
+      font-size: 0.92rem;
+    }
+
+    .status.ok {
+      color: var(--accent);
+    }
+
+    .status.error {
+      color: var(--danger);
+    }
+
+    .small {
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+
+    .pill-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 14px;
+    }
+
+    .pill {
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 6px 10px;
+      background: #0d1217;
+      color: var(--soft);
+      font-size: 0.82rem;
+      font-weight: 700;
+    }
+
+    ol,
+    ul {
+      margin: 0;
+      padding-left: 1.25rem;
+    }
+
+    li + li {
+      margin-top: 8px;
+    }
+
+    li::marker {
+      color: var(--accent);
+    }
+
+    .warning {
+      color: var(--warn);
+    }
+
+    @media (max-width: 880px) {
+      main {
+        width: min(100% - 20px, 1120px);
+        padding-top: 20px;
+      }
+
+      .grid,
+      .section-grid {
+        grid-template-columns: 1fr;
+      }
+
+      h1 {
+        max-width: none;
+        font-size: clamp(2.7rem, 14vw, 4.6rem);
+      }
+
+      .actions button {
+        flex: 1 1 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <header>
+      <p class="eyebrow">Local companion page</p>
+      <h1>Codex Reset</h1>
+      <p class="lead">
+        A readable browser companion for Codex reset credits and manual Codex account handoffs.
+        The page helps you prepare commands, copy operational notes, and keep the flow tidy.
+      </p>
+      <p class="notice">
+        This page is static. It does not call OpenAI endpoints, does not read `auth.json`, does not read cookies, does not use local storage, and does not make network requests. The CLI remains the tool that reads `auth.json` and redeems banked reset credits.
+      </p>
+      <div class="pill-row" aria-label="Safety summary">
+        <span class="pill">Single HTML file</span>
+        <span class="pill">No backend</span>
+        <span class="pill">No token access</span>
+        <span class="pill">No network calls</span>
+      </div>
+    </header>
+
+    <div class="grid">
+      <div class="stack">
+        <section aria-labelledby="reset-title">
+          <h2 id="reset-title">Reset credit command builder</h2>
+          <div class="section-grid">
+            <label>
+              Auth file path
+              <input id="authPath" spellcheck="false" placeholder="default: $CODEX_HOME/auth.json or ~/.codex/auth.json">
+            </label>
+            <label>
+              Action
+              <select id="resetAction">
+                <option value="status">Show credits and usage</option>
+                <option value="consume">Redeem one credit</option>
+                <option value="invite-status">Show Codex helper diagnostics</option>
+              </select>
+            </label>
+            <label>
+              Credit ID
+              <input id="creditId" spellcheck="false" placeholder="optional for consume">
+            </label>
+            <label>
+              Cookie file for diagnostics
+              <input id="cookieFile" spellcheck="false" placeholder="optional; use - for stdin">
+            </label>
+          </div>
+          <div class="section-grid">
+            <label class="check-row">
+              <input id="jsonOutput" type="checkbox">
+              JSON output
+            </label>
+            <label class="check-row">
+              <input id="dryRun" type="checkbox">
+              Dry run for consume
+            </label>
+            <label class="check-row">
+              <input id="assumeYes" type="checkbox">
+              Skip consume confirmation
+            </label>
+          </div>
+          <div class="actions">
+            <button class="primary" id="copyCommand" type="button">Copy command</button>
+            <button id="copyInstall" type="button">Copy install</button>
+            <button id="resetCommandForm" class="secondary" type="button">Reset fields</button>
+          </div>
+          <div class="result" aria-live="polite">
+            <strong>Command preview</strong>
+            <span id="commandPreview" class="mono">codex-reset status</span>
+          </div>
+          <p id="commandStatus" class="status">Build a command, then run it in your terminal.</p>
+        </section>
+
+        <section aria-labelledby="email-title">
+          <h2 id="email-title">Official handoff</h2>
+          <label>
+            Recipient email
+            <input id="email" type="email" inputmode="email" autocomplete="off" spellcheck="false" placeholder="name@example.com">
+          </label>
+          <div class="actions">
+            <button class="primary" id="copyEmail" type="button" disabled>Copy email</button>
+            <button id="copyChecklist" type="button" disabled>Copy checklist</button>
+            <button id="copyRecipientNote" type="button" disabled>Copy recipient note</button>
+            <button id="clearEmail" class="secondary" type="button">Clear</button>
+          </div>
+          <div class="result" aria-live="polite">
+            <strong>Normalized email</strong>
+            <span id="normalized" class="mono">No email entered</span>
+            <strong>Masked preview</strong>
+            <span id="masked" class="mono">-</span>
+          </div>
+          <p id="emailStatus" class="status">Enter an email to enable handoff actions.</p>
+        </section>
+      </div>
+
+      <div class="stack">
+        <section aria-labelledby="flow-title">
+          <h2 id="flow-title">Manual flow</h2>
+          <ol>
+            <li>Use the CLI to inspect reset credits before taking action.</li>
+            <li>Use the official Codex or ChatGPT invite UI when an invite email needs to be sent.</li>
+            <li>Send only if the official UI says the account is eligible and the action is available.</li>
+            <li>After the invite is accepted and a first Codex message is sent, use `codex-reset` to spend a banked reset when needed.</li>
+          </ol>
+        </section>
+
+        <section aria-labelledby="audit-title">
+          <h2 id="audit-title">Audit notes</h2>
+          <ul>
+            <li>The page never sends invites or redeems credits.</li>
+            <li>The page never reads `auth.json`, cookies, tokens, or account data.</li>
+            <li>The generated commands are visible before you copy them.</li>
+            <li class="warning">Redeeming a reset credit is irreversible once the CLI POST succeeds.</li>
+          </ul>
+        </section>
+
+        <section aria-labelledby="source-title">
+          <h2 id="source-title">Download and source</h2>
+          <p class="small">
+            Download the browser companion as a single HTML file, inspect it, and open it locally:
+          </p>
+          <p>
+            <a id="downloadLink" href="https://github.com/aaamosh/codex-reset/raw/main/codex-reset.html" rel="noopener noreferrer">Download codex-reset.html</a>
+          </p>
+          <p>
+            <a id="sourceLink" href="https://github.com/aaamosh/codex-reset/blob/main/codex-reset.html" rel="noopener noreferrer">View source on GitHub</a>
+          </p>
+        </section>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    const installCommand = "curl -fsSL https://raw.githubusercontent.com/aaamosh/codex-reset/main/codex_reset.py -o ~/.local/bin/codex-reset && chmod +x ~/.local/bin/codex-reset";
+    const fields = {
+      authPath: document.querySelector("#authPath"),
+      resetAction: document.querySelector("#resetAction"),
+      creditId: document.querySelector("#creditId"),
+      cookieFile: document.querySelector("#cookieFile"),
+      jsonOutput: document.querySelector("#jsonOutput"),
+      dryRun: document.querySelector("#dryRun"),
+      assumeYes: document.querySelector("#assumeYes"),
+      commandPreview: document.querySelector("#commandPreview"),
+      commandStatus: document.querySelector("#commandStatus"),
+      email: document.querySelector("#email"),
+      normalized: document.querySelector("#normalized"),
+      masked: document.querySelector("#masked"),
+      emailStatus: document.querySelector("#emailStatus"),
+      copyEmail: document.querySelector("#copyEmail"),
+      copyChecklist: document.querySelector("#copyChecklist"),
+      copyRecipientNote: document.querySelector("#copyRecipientNote")
+    };
+
+    function shellQuote(value) {
+      if (/^[A-Za-z0-9_./:=@%+-]+$/.test(value)) return value;
+      return "'" + value.replace(/'/g, "'\\''") + "'";
+    }
+
+    function normalizeEmail(value) {
+      return value.trim().toLowerCase();
+    }
+
+    function isValidEmail(value) {
+      return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+    }
+
+    function maskPart(value) {
+      if (value.length <= 2) return value[0] + "*";
+      return value[0] + "*".repeat(Math.min(3, value.length - 2)) + value[value.length - 1];
+    }
+
+    function maskEmail(value) {
+      const parts = value.split("@");
+      if (parts.length !== 2) return "-";
+      const domainParts = parts[1].split(".");
+      const domainName = domainParts.shift() || "";
+      const suffix = domainParts.length > 0 ? "." + domainParts.join(".") : "";
+      return maskPart(parts[0]) + "@" + maskPart(domainName) + suffix;
+    }
+
+    async function copyText(value) {
+      if (navigator.clipboard && window.isSecureContext) {
+        await navigator.clipboard.writeText(value);
+        return;
+      }
+      const element = document.createElement("textarea");
+      element.value = value;
+      element.setAttribute("readonly", "");
+      element.style.position = "fixed";
+      element.style.left = "-9999px";
+      document.body.appendChild(element);
+      element.select();
+      document.execCommand("copy");
+      element.remove();
+    }
+
+    function buildCommand() {
+      const parts = ["codex-reset"];
+      const authPath = fields.authPath.value.trim();
+      if (authPath) parts.push("--auth", shellQuote(authPath));
+
+      const action = fields.resetAction.value;
+      parts.push(action);
+
+      if (action === "status" && fields.jsonOutput.checked) {
+        parts.push("--json");
+      }
+      if (action === "invite-status") {
+        if (fields.jsonOutput.checked) parts.push("--json");
+        const cookieFile = fields.cookieFile.value.trim();
+        if (cookieFile) parts.push("--cookie-file", shellQuote(cookieFile));
+      }
+      if (action === "consume") {
+        const creditId = fields.creditId.value.trim();
+        if (creditId) parts.push("--credit-id", shellQuote(creditId));
+        if (fields.dryRun.checked) parts.push("--dry-run");
+        if (fields.assumeYes.checked) parts.push("--yes");
+      }
+      return parts.join(" ");
+    }
+
+    function refreshCommand() {
+      const action = fields.resetAction.value;
+      fields.creditId.disabled = action !== "consume";
+      fields.cookieFile.disabled = action !== "invite-status";
+      fields.dryRun.disabled = action !== "consume";
+      fields.assumeYes.disabled = action !== "consume";
+      fields.commandPreview.textContent = buildCommand();
+    }
+
+    function checklist(email) {
+      return [
+        "Codex Reset official handoff checklist",
+        "",
+        "1. Open the official Codex or ChatGPT invite UI.",
+        "2. Paste recipient email: " + email,
+        "3. Send only through the official OpenAI UI if eligible.",
+        "4. Ask the recipient to accept the invite, open Codex, and send a first message.",
+        "5. Use codex-reset to inspect and spend banked reset credits when needed.",
+        "",
+        "This page does not send invites, redeem credits, or call OpenAI endpoints."
+      ].join("\n");
+    }
+
+    function recipientNote(email) {
+      return [
+        "I sent the Codex invite through the official OpenAI UI for " + email + ".",
+        "Please check your inbox and spam folder, accept the invite, open Codex, and send your first message.",
+        "After that, any granted banked reset credit should appear in Codex Reset / Codex usage diagnostics."
+      ].join("\n");
+    }
+
+    function refreshEmail() {
+      const email = normalizeEmail(fields.email.value);
+      const valid = isValidEmail(email);
+      fields.normalized.textContent = email || "No email entered";
+      fields.masked.textContent = valid ? maskEmail(email) : "-";
+      fields.copyEmail.disabled = !valid;
+      fields.copyChecklist.disabled = !valid;
+      fields.copyRecipientNote.disabled = !valid;
+      if (!email) {
+        fields.emailStatus.textContent = "Enter an email to enable handoff actions.";
+        fields.emailStatus.className = "status";
+      } else if (!valid) {
+        fields.emailStatus.textContent = "This does not look like an email yet.";
+        fields.emailStatus.className = "status error";
+      } else {
+        fields.emailStatus.textContent = "Ready. Copy the email, then use the official invite UI manually.";
+        fields.emailStatus.className = "status ok";
+      }
+    }
+
+    for (const item of [
+      fields.authPath,
+      fields.resetAction,
+      fields.creditId,
+      fields.cookieFile,
+      fields.jsonOutput,
+      fields.dryRun,
+      fields.assumeYes
+    ]) {
+      item.addEventListener("input", refreshCommand);
+      item.addEventListener("change", refreshCommand);
+    }
+
+    fields.email.addEventListener("input", refreshEmail);
+    document.querySelector("#copyCommand").addEventListener("click", async () => {
+      await copyText(buildCommand());
+      fields.commandStatus.textContent = "Command copied.";
+      fields.commandStatus.className = "status ok";
+    });
+    document.querySelector("#copyInstall").addEventListener("click", async () => {
+      await copyText(installCommand);
+      fields.commandStatus.textContent = "Install command copied.";
+      fields.commandStatus.className = "status ok";
+    });
+    document.querySelector("#resetCommandForm").addEventListener("click", () => {
+      fields.authPath.value = "";
+      fields.resetAction.value = "status";
+      fields.creditId.value = "";
+      fields.cookieFile.value = "";
+      fields.jsonOutput.checked = false;
+      fields.dryRun.checked = false;
+      fields.assumeYes.checked = false;
+      fields.commandStatus.textContent = "Build a command, then run it in your terminal.";
+      fields.commandStatus.className = "status";
+      refreshCommand();
+    });
+    fields.copyEmail.addEventListener("click", async () => {
+      await copyText(normalizeEmail(fields.email.value));
+      fields.emailStatus.textContent = "Email copied.";
+      fields.emailStatus.className = "status ok";
+    });
+    fields.copyChecklist.addEventListener("click", async () => {
+      await copyText(checklist(normalizeEmail(fields.email.value)));
+      fields.emailStatus.textContent = "Checklist copied.";
+      fields.emailStatus.className = "status ok";
+    });
+    fields.copyRecipientNote.addEventListener("click", async () => {
+      await copyText(recipientNote(normalizeEmail(fields.email.value)));
+      fields.emailStatus.textContent = "Recipient note copied.";
+      fields.emailStatus.className = "status ok";
+    });
+    document.querySelector("#clearEmail").addEventListener("click", () => {
+      fields.email.value = "";
+      fields.email.focus();
+      refreshEmail();
+    });
+
+    refreshCommand();
+    refreshEmail();
+  </script>
+</body>
+</html>
